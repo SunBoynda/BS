@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.GoodsDao">
+    <resultMap id="BaseResultMap" type="com.example.demo.domain.Goods">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_id" jdbcType="INTEGER" property="userId"/>
+        <result column="goods_name" jdbcType="VARCHAR" property="goodsName"/>
+        <result column="goods_num" jdbcType="INTEGER" property="goodsNum"/>
+        <result column="status" jdbcType="INTEGER" property="status"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+        id, user_id, goods_name, goods_num, `status`
+    </sql>
+    <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from goods
+        where id = #{id,jdbcType=INTEGER}
+    </select>
+    <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+        delete from goods
+        where id = #{id,jdbcType=INTEGER}
+    </delete>
+    <insert id="insert" keyColumn="id" keyProperty="id" parameterType="com.example.demo.domain.Goods"
+            useGeneratedKeys="true">
+        insert into goods (user_id, goods_name, goods_num,
+        `status`)
+        values (#{userId,jdbcType=INTEGER}, #{goodsName,jdbcType=VARCHAR}, #{goodsNum,jdbcType=INTEGER},
+        #{status,jdbcType=INTEGER})
+    </insert>
+    <insert id="insertSelective" keyColumn="id" keyProperty="id" parameterType="com.example.demo.domain.Goods"
+            useGeneratedKeys="true">
+        insert into goods
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                user_id,
+            </if>
+            <if test="goodsName != null">
+                goods_name,
+            </if>
+            <if test="goodsNum != null">
+                goods_num,
+            </if>
+            <if test="status != null">
+                `status`,
+            </if>
+        </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="userId != null">
+                #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="goodsName != null">
+                #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsNum != null">
+                #{goodsNum,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                #{status,jdbcType=INTEGER},
+            </if>
+        </trim>
+    </insert>
+    <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.domain.Goods">
+        update goods
+        <set>
+            <if test="userId != null">
+                user_id = #{userId,jdbcType=INTEGER},
+            </if>
+            <if test="goodsName != null">
+                goods_name = #{goodsName,jdbcType=VARCHAR},
+            </if>
+            <if test="goodsNum != null">
+                goods_num = #{goodsNum,jdbcType=INTEGER},
+            </if>
+            <if test="status != null">
+                `status` = #{status,jdbcType=INTEGER},
+            </if>
+        </set>
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <update id="updateByPrimaryKey" parameterType="com.example.demo.domain.Goods">
+        update goods
+        set user_id = #{userId,jdbcType=INTEGER},
+        goods_name = #{goodsName,jdbcType=VARCHAR},
+        goods_num = #{goodsNum,jdbcType=INTEGER},
+        `status` = #{status,jdbcType=INTEGER}
+        where id = #{id,jdbcType=INTEGER}
+    </update>
+    <select id="adminSelect" resultType="com.example.demo.domain.Goods">
+        select
+        <include refid="Base_Column_List"></include>
+        from goods where status = 0;
+    </select>
+    <select id="superAdminSelect" resultType="com.example.demo.domain.Goods">
+        select
+        <include refid="Base_Column_List"></include>
+        from goods where status = 1;
+    </select>
+    <select id="selectByUserId" resultType="com.example.demo.VO.GoodVO" parameterType="java.lang.Integer">
+        SELECT
+        goods.id AS id,
+        goods.status AS status,
+        goods.goods_name AS goodsName,
+        goods.goods_num AS goodsNum
+        FROM
+        `user` JOIN goods ON goods.user_id = `user`.id
+        WHERE
+        `user`.id = #{id}
+    </select>
+</mapper>
